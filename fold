@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Elite Fashion Store</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;color:#333}
+
+/* NAVBAR */
+nav{display:flex;justify-content:space-between;align-items:center;padding:15px 8%;background:#000;color:white;position:sticky;top:0;z-index:1000}
+.logo{font-size:24px;font-weight:bold;letter-spacing:2px}
+nav a{color:white;margin-left:25px;text-decoration:none;transition:.3s}
+nav a:hover{color:#e91e63}
+.cart-icon{cursor:pointer;font-size:18px}
+
+/* HERO SLIDER */
+.hero{position:relative;height:80vh;overflow:hidden}
+.slide{position:absolute;width:100%;height:100%;opacity:0;transition:1s}
+.slide img{width:100%;height:100%;object-fit:cover}
+.active{opacity:1}
+.hero-text{position:absolute;top:50%;left:10%;transform:translateY(-50%);color:white;background:rgba(0,0,0,.55);padding:30px;border-radius:12px;animation:fadeUp 1s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(-50%)}}
+.hero-text h1{font-size:55px;margin-bottom:10px}
+
+/* PRODUCTS */
+.products{padding:60px 8%;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px}
+.card{background:white;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.08);overflow:hidden;transition:.3s}
+.card:hover{transform:translateY(-8px)}
+.card img{width:100%;height:280px;object-fit:cover}
+.info{padding:20px}
+.info h3{margin:0 0 10px}
+.price{color:#111;font-weight:bold;margin-bottom:10px}
+.desc{color:#555;font-size:14px;margin-bottom:10px}
+select,input,textarea{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #ddd}
+button{width:100%;padding:12px;border:none;background:black;color:white;font-weight:bold;border-radius:8px;cursor:pointer;transition:.3s}
+button:hover{background:#444}
+
+/* CART */
+.cart{position:fixed;right:0;top:0;width:320px;height:100%;background:white;box-shadow:-5px 0 20px rgba(0,0,0,0.2);padding:20px;transform:translateX(100%);transition:.4s;overflow:auto;z-index:2000}
+.cart.active{transform:translateX(0)}
+.cart h2{margin-top:0}
+.cart-item{border-bottom:1px solid #ddd;padding:10px 0}
+.total{font-weight:bold;margin-top:20px;font-size:18px}
+.whatsapp{background:#25D366;color:white;border:none;padding:12px 0;border-radius:6px;cursor:pointer;width:100%;margin-top:10px}
+
+/* CONTACT FORM */
+.contact-form{background:#111;color:white;padding:50px 8%;margin-top:60px;border-radius:12px}
+.contact-form h2{color:#fff;text-align:center;margin-bottom:30px}
+.contact-form input, .contact-form textarea{background:#222;color:white;border:none}
+.contact-form button{background:#e91e63}
+
+/* FOOTER */
+footer{text-align:center;padding:50px 8%;background:#000;color:white;margin-top:60px}
+
+/* MOBILE */
+@media(max-width:600px){.hero{height:60vh}.hero-text h1{font-size:32px}}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+<div class="logo">ELITE FASHION</div>
+<div>
+<a href="#home">Home</a>
+<a href="#shop">Shop</a>
+<a href="#contact">Contact</a>
+<span class="cart-icon" onclick="toggleCart()">🛒 Cart (<span id="count">0</span>)</span>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+<div class="slide active"><img src="https://images.unsplash.com/photo-1520975928316-56f5f4f5e4d0"></div>
+<div class="slide"><img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d"></div>
+<div class="slide"><img src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd53"></div>
+<div class="hero-text">
+<h1>Luxury Fashion Collection</h1>
+<p>Style That Defines You</p>
+</div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="shop"></section>
+
+<!-- CART -->
+<div class="cart" id="cart">
+<h2>Your Order</h2>
+<div id="cartItems"></div>
+<div class="total">Total: ₦<span id="total">0</span></div>
+<button class="whatsapp" onclick="sendWhatsApp()">Order on WhatsApp</button>
+</div>
+
+<!-- CONTACT FORM -->
+<section class="contact-form" id="contact">
+<h2>Contact Us</h2>
+<form id="contactForm">
+<input type="text" id="contactName" placeholder="Your Name" required>
+<input type="email" id="contactEmail" placeholder="Your Email" required>
+<textarea id="contactMsg" rows="5" placeholder="Your Message" required></textarea>
+<button type="submit">Send Message</button>
+</form>
+<p style="text-align:center;margin-top:15px;">Or WhatsApp: +234XXXXXXXXXX</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<h2>Elite Fashion</h2>
+<p>Premium quality fashion items delivered nationwide.</p>
+</footer>
+
+<script>
+/* PRODUCTS DATA */
+const products=[
+{name:"Classic Senator Wear",price:35000,img:"https://images.unsplash.com/photo-1593032465175-481ac7f401a0",desc:"Premium tailored jacket for elegance and comfort."},
+{name:"Luxury Native Outfit",price:42000,img:"https://images.unsplash.com/photo-1603252109360-909baaf261c7",desc:"Stylish native outfit for special occasions."},
+{name:"Royal Agbada",price:55000,img:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80",desc:"Classic royal agbada designed for bold confidence."},
+{name:"Casual Designer Shirt",price:18000,img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf",desc:"Modern casual shirt perfect for trendy style."},
+{name:"Premium Suit",price:60000,img:"https://images.unsplash.com/photo-1593032580308-d4b8a2f3d2c6",desc:"High-quality premium suit for formal events."},
+{name:"Luxury Kaftan",price:38000,img:"https://images.unsplash.com/photo-1595341888016-a392ef81b7de",desc:"Elegant luxury kaftan crafted for comfort and style."},
+{name:"Corporate Blazer",price:45000,img:"https://images.unsplash.com/photo-1598033129183-c4f50c736f10",desc:"Perfect blazer for business and professional events."},
+{name:"Traditional Attire",price:47000,img:"https://images.unsplash.com/photo-1600185365483-26d7a4cc7519",desc:"Traditional outfit made with exquisite details."},
+{name:"Elegant Dress",price:52000,img:"https://images.unsplash.com/photo-1520975916090-3105956dac38",desc:"Chic dress designed for modern elegance."},
+{name:"Modern Jacket",price:33000,img:"https://images.unsplash.com/photo-1544441893-675973e31985",desc:"Trendy jacket for everyday style."},
+{name:"Premium Tuxedo",price:65000,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",desc:"Sophisticated tuxedo for special nights."},
+{name:"Street Wear Set",price:22000,img:"https://images.unsplash.com/photo-1520974735194-5f6d44a3c4d0",desc:"Cool street wear outfit for casual looks."},
+{name:"Designer Skirt",price:25000,img:"https://images.unsplash.com/photo-1514996937319-344454492b37",desc:"Elegant skirt with modern style."},
+{name:"Casual Polo Shirt",price:18000,img:"https://images.unsplash.com/photo-1520975867597-0af37a22e31e",desc:"Classic casual polo for everyday wear."},
+{name:"Royal Blazer",price:57000,img:"https://images.unsplash.com/photo-1521334884684-d80222895322",desc:"Luxury blazer for formal events."},
+{name:"Luxury Gown",price:62000,img:"https://images.unsplash.com/photo-1490481651871-ab68de25d43d",desc:"Exquisite gown with premium finish."},
+{name:"Chic Casual",price:27000,img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c",desc:"Stylish casual outfit for daily wear."},
+{name:"Modern Fit Outfit",price:40000,img:"https://images.unsplash.com/photo-1520975916090-3105956dac38",desc:"Trendy modern fit for every occasion."}
+];
+
+let cart=[];
+
+/* DISPLAY PRODUCTS */
+const container=document.getElementById("shop");
+products.forEach((p,i)=>{
+container.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div class="info">
+<h3>${p.name}</h3>
+<p class="desc">${p.desc}</p>
+<p class="price">₦${p.price}</p>
+<select id="size${i}"><option>Size</option><option>S</option><option>M</option><option>L</option><option>XL</option></select>
+<input type="number" id="qty${i}" value="1" min="1">
+<button onclick="addToCart(${i})">Pay Now</button>
+</div>
+</div>`
+})
+
+/* CART FUNCTIONS */
+function addToCart(i){
+let size=document.getElementById("size"+i).value;
+let qty=parseInt(document.getElementById("qty"+i).value);
+if(size==="Size"){alert("Select size");return;}
+cart.push({...products[i],size,qty});
+updateCart();
+}
+
+function updateCart(){
+let items=document.getElementById("cartItems");items.innerHTML="";
+let total=0;
+cart.forEach(item=>{
+total+=item.price*item.qty;
+items.innerHTML+=`<div class="cart-item">${item.name}<br>Size:${item.size}<br>Qty:${item.qty}<br>₦${item.price*item.qty}</div>`})
+document.getElementById("total").innerText=total;
+document.getElementById("count").innerText=cart.length;
+}
+
+function toggleCart(){document.getElementById("cart").classList.toggle("active");}
+
+/* HERO SLIDER */
+let slides=document.querySelectorAll(".slide");let index=0;
+setInterval(()=>{slides[index].classList.remove("active");index=(index+1)%slides.length;slides[index].classList.add("active");},4000);
+
+/* WHATSAPP ORDER */
+function sendWhatsApp(){
+if(cart.length===0){alert("Cart empty");return;}
+let msg="ORDER DETAILS:%0A";let total=0;
+cart.forEach(item=>{msg+=`${item.name} Size:${item.size} Qty:${item.qty}%0A`;total+=item.price*item.qty;})
+msg+=`Total = ₦${total}`;
+window.open(`https://wa.me/234XXXXXXXXXX?text=${msg}`);
+}
+
+/* CONTACT FORM */
+document.getElementById("contactForm").addEventListener("submit",function(e){
+e.preventDefault();
+let name=document.getElementById("contactName").value;
+let email=document.getElementById("contactEmail").value;
+let msg=document.getElementById("contactMsg").value;
+window.open(`mailto:youremail@example.com?subject=Contact from ${name}&body=Email: ${email}%0A%0AMessage:%0A${msg}`);
+alert("Your message is ready to send via your email client.");
+this.reset();
+});
+</script>
+</body>
+</html>
