@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book an Appointment</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body>
+<div class="container">
+<div class="booking-card">
+<div class="booking-section">
+    <h2>Book an Appointment</h2>
+    <input type="text" id="customerName" placeholder="Full Name">
+    <input type="tel" id="customerPhone" placeholder="Phone Number">
+    <input type="email" id="customerEmail" placeholder="Email">
+    <select id="service">
+        <option value="">Select Service</option>
+        <option value="Consultation">Consultation</option>
+        <option value="Business Setup">Business Setup</option>
+        <option value="Website Design">Website Design</option>
+    </select>
+    <input type="date" id="date">
+    <input type="time" id="time">
+    <button type="button" id="payNowBtn">Pay Now</button>
+    <p class="message" id="bookingMessage"></p>
+</div>
+</div>
+</div>
+<script>
+document.getElementById('payNowBtn').addEventListener('click', function () {
+
+    const name = document.getElementById('customerName').value.trim();
+    const phone = document.getElementById('customerPhone').value.trim();
+    const email = document.getElementById('customerEmail').value.trim();
+    const service = document.getElementById('service').value;
+    const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('time');
+    const messageEl = document.getElementById('bookingMessage');
+
+    const date = dateInput.value;
+    const time = timeInput.value;
+
+    console.log({ name, phone, email, service, date, time });
+
+    if (
+        name === "" ||
+        phone === "" ||
+        email === "" ||
+        service === "" ||
+        date === "" ||
+        time === ""
+    ) {
+        messageEl.textContent = "Please fill in all fields.";
+        messageEl.style.color = "red";
+        return;
+    }
+
+    let amount = 50000;
+    if (service === "Consultation") amount = 5000;
+    if (service === "Business Setup") amount = 15000;
+    if (service === "Website Design") amount = 25000;
+
+    const handler = PaystackPop.setup({
+        key: 'pk_test_d4d41ccd4d446863f222c41715d0b49a02e1c8aa', // PUT YOUR REAL PUBLIC KEY
+        email: email,
+        amount: amount,
+        currency: "NGN",
+        ref: "BOOK_" + Date.now(),
+
+        callback: function (response) {
+            messageEl.textContent = "Payment successful! Ref: " + response.reference;
+            messageEl.style.color = "green";
+        },
+
+        onClose: function () {
+            messageEl.textContent = "Payment cancelled.";
+            messageEl.style.color = "orange";
+        }
+    });
+
+    handler.openIframe();
+});
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
